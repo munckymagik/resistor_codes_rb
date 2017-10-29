@@ -23,7 +23,7 @@ def random_code
     (1..9).to_a.sample,
     (0..9).to_a.sample,
     (0..9).to_a.sample,
-    (0..4).to_a.sample
+    (0..11).to_a.sample
   ]
 end
 
@@ -61,7 +61,7 @@ end
 
 def format_as_ohms(value)
   return '0Ω' if value == 0.0
-  [[10**6, 'M'], [10**3, 'K'], [10**0, '']].each do |denominator, postfix|
+  [[10**9, 'G'], [10**6, 'M'], [10**3, 'K'], [10**0, '']].each do |denominator, postfix|
     result = value / denominator
     return format('%g%s', result, postfix) if result >= 1.0
   end
