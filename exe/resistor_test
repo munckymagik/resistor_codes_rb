@@ -23,7 +23,7 @@ def random_code
     (1..9).to_a.sample,
     (0..9).to_a.sample,
     (0..9).to_a.sample,
-    (0..3).to_a.sample
+    (0..4).to_a.sample
   ]
 end
 
@@ -59,12 +59,22 @@ def render_key
   "Digits:      #{digits}\nMultipliers: #{multipliers}"
 end
 
+def format_as_ohms(value)
+  return '0Ω' if value == 0.0
+  [[10**6, 'M'], [10**3, 'K'], [10**0, '']].each do |denominator, postfix|
+    result = value / denominator
+    return format('%g%sΩ', result, postfix) if result >= 1.0
+  end
+end
+
 def render_outcome(answer, response)
   if response == answer
     puts Rainbow('CORRECT').green
   else
     puts Rainbow('WRONG').red
-    puts "ANS: #{Rainbow(answer).green.underline}, YOURS: #{Rainbow(response).red}"
+    answer_ohms = format_as_ohms(answer)
+    response_ohms = format_as_ohms(response)
+    puts "ANS: #{Rainbow(answer_ohms).green}, YOURS: #{Rainbow(response_ohms).red}"
   end
 end
 
