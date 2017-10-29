@@ -1,0 +1,17 @@
+GEM
+  remote: https://rubygems.org/
+  specs:
+    byebug (9.0.6)
+    rainbow (2.2.2)
+      rake
+    rake (12.2.1)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  byebug
+  rainbow
+
+BUNDLED WITH
+   1.15.4
