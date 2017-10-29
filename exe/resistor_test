@@ -63,18 +63,16 @@ def format_as_ohms(value)
   return '0Ω' if value == 0.0
   [[10**6, 'M'], [10**3, 'K'], [10**0, '']].each do |denominator, postfix|
     result = value / denominator
-    return format('%g%sΩ', result, postfix) if result >= 1.0
+    return format('%g%s', result, postfix) if result >= 1.0
   end
 end
 
 def render_outcome(answer, response)
   if response == answer
-    puts Rainbow('CORRECT').green
+    puts "#{Rainbow('CORRECT').green} #{answer}Ω"
   else
     puts Rainbow('WRONG').red
-    answer_ohms = format_as_ohms(answer)
-    response_ohms = format_as_ohms(response)
-    puts "ANS: #{Rainbow(answer_ohms).green}, YOURS: #{Rainbow(response_ohms).red}"
+    puts "ANS: #{Rainbow(answer).green}Ω, YOURS: #{Rainbow(response).red}Ω"
   end
 end
 
@@ -82,21 +80,19 @@ def code_to_number(code)
   ((code[0] * 100 + code[1] * 10 + code[2]) * MULTS[code[3]]).to_f
 end
 
-def parse_answer(answer)
-  answer = answer.strip.downcase
-  value = answer.to_f
-  mult = case answer[-1]
-         when 'm' then 1000000
-         when 'k' then 1000
-         else 1
-         end
-  value * mult
+def code_to_str(code)
+  number = code_to_number(code)
+  format_as_ohms(number)
+end
+
+def parse_response(answer)
+  answer.strip.upcase
 end
 
 def prompt(code)
   puts render_code(code)
   print '? '
-  parse_answer(gets)
+  parse_response(gets)
 end
 
 begin
@@ -105,7 +101,7 @@ begin
 
   10.times do
     code = random_code
-    answer = code_to_number(code)
+    answer = code_to_str(code)
     response = prompt(code)
     puts render_outcome(answer, response)
     puts
