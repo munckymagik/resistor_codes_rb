@@ -43,8 +43,13 @@ def render_band(str, colour)
 end
 
 def render_code(code)
+  body = Rainbow('|').color(:lightblue)
+  wire = Rainbow('———').color(:darkgray)
   names = to_colours_names(code)
-  names.map { |c| render_band(' ', c) }.join(' ') + " (#{names.join(' ')})"
+  bands = names.map { |c| render_band(' ', c) }
+  colour_hint = " (#{names.join(' ')})"
+
+  [wire, body, bands.join(body), body, wire, colour_hint].join
 end
 
 def code_to_number(code)
@@ -63,7 +68,9 @@ def parse_answer(answer)
 end
 
 def key
-  COLOURS[0..9].each_with_index.map { |c,i| "#{render_band(i, c)}" }.join(' ')
+  digits = COLOURS[0..9].each_with_index.map { |c,i| render_band(i, c) }.join(' ')
+  multipliers = MULTS.each_with_index.map { |m, i| render_band(m, COLOURS.fetch(i)) }.join(' ')
+  "Digits:      #{digits}\nMultipliers: #{multipliers}"
 end
 
 def prompt(code)
