@@ -53,6 +53,15 @@ def render_code(code)
   [wire, body, bands.join(body), body, wire, colour_hint].join
 end
 
+def render_outcome(answer, response)
+  if response == answer
+    puts Rainbow('CORRECT').green
+  else
+    puts Rainbow('WRONG').red
+    puts "ANS: #{Rainbow(answer).green.underline}, YOURS: #{Rainbow(response).red}"
+  end
+end
+
 def code_to_number(code)
   ((code[0] * 100 + code[1] * 10 + code[2]) * MULTS[code[3]]).to_f
 end
@@ -88,12 +97,7 @@ begin
     code = random_code
     answer = code_to_number(code)
     response = prompt(code)
-    if response == answer
-      puts Rainbow('CORRECT').green
-    else
-      puts Rainbow('WRONG').red
-      puts "ANS: #{answer}, YOURS: #{response}"
-    end
+    puts render_outcome(answer, response)
     puts
   end
 rescue Interrupt
