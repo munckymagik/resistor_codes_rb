@@ -18,7 +18,8 @@ COLOURS = %i[
   silver
 ].freeze
 
-MULTS = ((0..9).to_a + [-1, -2]).map { |p| 10**p }
+EXPONENTS = (0..9).to_a + [-1, -2]
+MULTS = EXPONENTS.map { |p| 10**p }
 
 def random_code
   [
@@ -57,7 +58,10 @@ end
 
 def render_key
   digits = COLOURS[0..9].each_with_index.map { |c, i| render_band(i, c) }.join(' ')
-  multipliers = MULTS.each_with_index.map { |m, i| render_band(m, COLOURS.fetch(i)) }.join(' ')
+  multipliers = EXPONENTS
+    .map { |exponent| format('10^%d', exponent) }
+    .each_with_index
+    .map { |s, i| render_band(s, COLOURS.fetch(i)) }.join(' ')
   "Digits:      #{digits}\nMultipliers: #{multipliers}"
 end
 
