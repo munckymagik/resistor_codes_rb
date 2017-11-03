@@ -16,17 +16,31 @@ COLOURS = %i[
   white
   gold
   silver
+  __blank__
 ].freeze
 
 EXPONENTS = (0..9).to_a + [-1, -2]
 MULTS = EXPONENTS.map { |p| 10**p }
+
+TOLERANCE_VALUES = {
+  1 => 1,
+  2 => 2,
+  5 => 0.5,
+  6 => 0.25,
+  7 => 0.1,
+  10 => 5,
+  11 => 10,
+  12 => 20
+}.freeze
+TOLERANCES = TOLERANCE_VALUES.keys.freeze
 
 def random_code
   [
     (1..9).to_a.sample,
     (0..9).to_a.sample,
     (0..9).to_a.sample,
-    (0..11).to_a.sample
+    (0..11).to_a.sample,
+    TOLERANCES.sample
   ]
 end
 
@@ -43,14 +57,22 @@ def map_colour(colour)
 end
 
 def render_band(str, colour)
+  return str if colour == :__blank__
   Rainbow(str).bg(map_colour(colour))
+end
+
+def render_bands(colours)
+  colours
+    .each_with_index
+    .map { |c, i| [c, colours.size - 1 == i] }
+    .map { |colour, is_tolerance| render_band(is_tolerance ? '%' : ' ', colour) }
 end
 
 def render_code(code)
   body = Rainbow('|').color(:lightblue)
   wire = Rainbow('———').color(:darkgray)
   names = to_colours_names(code)
-  bands = names.map { |c| render_band(' ', c) }
+  bands = render_bands(names)
   colour_hint = " (#{names.join(' ')})"
 
   [wire, body, bands.join(body), body, wire, colour_hint].join
@@ -59,10 +81,14 @@ end
 def render_key
   digits = COLOURS[0..9].each_with_index.map { |c, i| render_band(i, c) }.join(' ')
   multipliers = EXPONENTS
-    .map { |exponent| format('10^%d', exponent) }
-    .each_with_index
-    .map { |s, i| render_band(s, COLOURS.fetch(i)) }.join(' ')
-  "Digits:      #{digits}\nMultipliers: #{multipliers}"
+                .map { |exponent| format('10^%d', exponent) }
+                .each_with_index
+                .map { |s, i| render_band(s, COLOURS.fetch(i)) }
+                .join(' ')
+  tolerances = TOLERANCE_VALUES
+               .map { |index, value| render_band("#{value}%", COLOURS[index]) }
+               .join(' ')
+  "Digits:      #{digits}\nMultipliers: #{multipliers}\nTolerances:  #{tolerances}"
 end
 
 def format_as_ohms(value)
